@@ -11,7 +11,7 @@
 
 namespace ColorValues
 {
-    ImColor lumonBlue = ImColor(101,213,235,255);
+    ImColor lumonBlue = ImColor(157,227,235,255);
 }
 
 class UIManagerImpl : public UIManager
@@ -39,26 +39,25 @@ public:
 
     void update() final
     {
-        if (ImGui::IsKeyPressed(ImGuiKey_Tab))
-        {
-            debugMode = !debugMode;
+        // Toggle settings mode with 'TAB'
+        if (ImGui::IsKeyPressed(ImGuiKey_Tab)) {
+            settingsMode = !settingsMode;
         }
 
-        if (ImGui::IsKeyPressed(ImGuiKey_I))
-        {
+        // Toggle idle mode with 'I'
+        if (ImGui::IsKeyPressed(ImGuiKey_I)) {
             idleMode = !idleMode;
         }
 
-        if (idleMode)
-        {
+        if (idleMode) {
             idleScreen->update();
-            if (ImGui::IsMouseClicked(ImGuiMouseButton_Left))
-            {
+
+            // Exit idle mode with 'LEFT CLICK'
+            if (ImGui::IsMouseClicked(ImGuiMouseButton_Left)) {
                 idleMode = false;
                 numbersPanel->triggerLoadAnimation();
             }
-        } else
-        {
+        } else {
             numbersPanel->update();
         }
     }
@@ -76,22 +75,18 @@ public:
         ImGui::SetNextWindowSize(ImVec2(viewportSize.x, viewportSize.y));
         if (ImGui::Begin("Main", nullptr, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoScrollWithMouse))
         {
-            if (idleMode)
-            {
+            if (idleMode) {
                 idleScreen->drawIdleScreen();
-            } else
-            {
+            } else {
                 numbersPanel->drawNumbersPanel();
             }
         }
         ImGui::End();
 
-        if (debugMode)
-        {
+        if (settingsMode) {
             ImGui::SetNextWindowPos(viewportPos);
             ImGui::SetNextWindowSize(ImVec2(viewportSize.x * settingsWidthRatio, viewportSize.y));
-            if (ImGui::Begin("Settings"))
-            {
+            if (ImGui::Begin("Settings")) {
                 numbersPanel->drawSettings();
             }
             ImGui::End();
@@ -107,11 +102,10 @@ public:
 
 private:
     std::shared_ptr<ImageDisplay> imageDisplay;
-
     std::shared_ptr<NumbersPanel> numbersPanel;
     std::shared_ptr<IdleScreen> idleScreen;
 
-    bool debugMode = false;
+    bool settingsMode = false;
     bool idleMode = false;
 };
 

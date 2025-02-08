@@ -13,10 +13,8 @@ namespace ColorValues
 class UIManager {
 public:
     virtual void init() = 0;
-
     virtual void draw() = 0;
     virtual void update() = 0;
-
     virtual void cleanup() = 0;
 
     virtual ~UIManager() = default;

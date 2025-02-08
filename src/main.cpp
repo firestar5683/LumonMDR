@@ -1,10 +1,10 @@
+#include "UI/UIManager.h"
+
 #include "imgui.h"
 #include "backends/imgui_impl_glfw.h"
 #include <GLFW/glfw3.h>
 #include <imgui_impl_opengl3.h>
 #include <iostream>
-
-#include "UI/UIManager.h"
 
 void glfw_error_callback(int error, const char* description) {
     std::cerr << "GLFW Error (" << error << "): " << description << std::endl;

@@ -25,8 +25,7 @@ public:
     void drawImGuiImage(const std::string& imagePath, float scale, std::optional<ImVec4> tint) final
     {
         auto filePath = assetDir + imagePath;
-        if (auto image = getImageForFile(filePath))
-        {
+        if (auto image = getImageForFile(filePath)) {
             ImGui::Image((ImTextureID)(intptr_t)image->texture, ImVec2(image->width*scale, image->height*scale),
                         ImVec2(0,0), ImVec2(1,1), tint.value_or(ImVec4(1,1,1,1)));
         }
@@ -35,8 +34,7 @@ public:
     std::pair<int, int> getImageSize(const std::string &imagePath) final
     {
         auto filePath = assetDir + imagePath;
-        if (auto image = getImageForFile(filePath))
-        {
+        if (auto image = getImageForFile(filePath)) {
             return std::make_pair(image->width, image->height);
         }
         return std::make_pair(0, 0);
@@ -44,8 +42,7 @@ public:
 
     std::optional<Image> getImageForFile(const std::string& filePath)
     {
-        if (auto it = imageCache.find(filePath); it != imageCache.end())
-        {
+        if (auto it = imageCache.find(filePath); it != imageCache.end()) {
             // Return from cache
             return it->second;
         }
@@ -58,8 +55,7 @@ public:
     {
         // Load texture from file
         FILE* f = fopen(filePath.c_str(), "rb");
-        if (f == NULL)
-        {
+        if (f == NULL) {
             std::cerr << "Failed to open file " << filePath << std::endl;
             return std::nullopt;
         }
@@ -96,8 +92,9 @@ public:
         int image_width = 0;
         int image_height = 0;
         unsigned char* image_data = stbi_load_from_memory((const unsigned char*)data, (int)data_size, &image_width, &image_height, NULL, 4);
-        if (image_data == NULL)
+        if (image_data == NULL) {
             return false;
+        }
 
         GLuint image_texture;
         glGenTextures(1, &image_texture);

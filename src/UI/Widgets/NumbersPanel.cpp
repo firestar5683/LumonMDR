@@ -23,14 +23,12 @@ public:
 
         // Update max bad groups for each bin
         auto badGroups = numberGrid->getBadGroups();
-        for (auto &[id, group] : badGroups)
-        {
+        for (auto &[id, group] : badGroups) {
             bins[group->binIdx].maxBadGroups++;
         }
 
         // Load settings
-        if (auto loadedSettings = loadSettings(settingsSavePath))
-        {
+        if (auto loadedSettings = loadSettings(settingsSavePath)) {
             displaySettings = loadedSettings->displaySettings;
             controlSettings = loadedSettings->controlSettings;
             std::cout << "Successfully loaded settings from disk." << std::endl;
@@ -43,8 +41,7 @@ public:
         ImGuiIO& io = ImGui::GetIO();
         font = io.Fonts->AddFontFromFileTTF("./assets/Montserrat-Bold.ttf", 50.f);
         io.Fonts->Build();
-        if (font == nullptr)
-        {
+        if (font == nullptr) {
             font = ImGui::GetDefaultFont();
             std::cerr << "Failed to load 'Montserrat-Bold' font." << std::endl;
         }
@@ -82,29 +79,26 @@ public:
     void triggerLoadAnimation() final
     {
         // Reset 'regenerate scale' on all numbers
-        for (auto &[x, gridY] : numberGrid->getGrid())
-        {
-            for (auto &[y, gridNumber] : gridY)
-            {
+        for (auto &[x, gridY] : numberGrid->getGrid()) {
+            for (auto &[y, gridNumber] : gridY) {
                 gridNumber->regenerateScale = 0.f;
             }
         }
-
     }
 
 private:
     std::optional<int> drawNumbersGrid(const ImVec2& windowPos, const ImVec2& windowSize, const ImVec2& mousePos, bool updateDisplayInfos)
     {
         std::optional<int> refiningToBin = std::nullopt;
-        for (auto &[x, gridY] : numberGrid->getGrid())
-        {
-            for (auto &[y, gridNumber] : gridY)
-            {
+        for (auto &[x, gridY] : numberGrid->getGrid()) {
+            for (auto &[y, gridNumber] : gridY) {
+
                 std::string numberToDraw = "numbers/" + std::to_string(gridNumber->num) + ".png";
                 auto [width, height] = imageDisplay->getImageSize(numberToDraw);
                 double badScale = gridNumber->badGroup ? gridNumber->badGroup->scale : 0.0;
-                if (updateDisplayInfos)
-                {
+
+                if (updateDisplayInfos) {
+                    // Only need to update when viewport has changed
                     ImVec2 localNumberPos = ImVec2((x * displaySettings.gridSpacing + panelOffset.x)*panelScale, (y * displaySettings.gridSpacing + panelOffset.y)*panelScale);
                     gridNumber->displayInfos.centerX = localNumberPos.x + windowPos.x;
                     gridNumber->displayInfos.centerY = localNumberPos.y + windowPos.y;
@@ -114,104 +108,97 @@ private:
                     double heightOffset = (baseNumberScale*height/2.f);
                     gridNumber->displayInfos.isVisible = gridNumber->displayInfos.centerX + widthOffset < windowPos.x + windowSize.x && gridNumber->displayInfos.centerX - widthOffset > windowPos.x &&
                                                             gridNumber->displayInfos.centerY + heightOffset < windowPos.y + windowSize.y - displayPresets.numberWindowBufferBottom && gridNumber->displayInfos.centerY - heightOffset > windowPos.y + displayPresets.numberWindowBufferTop;
-
                 }
 
-                if (!gridNumber->displayInfos.isVisible)
-                {
+                // Don't draw numbers out of viewport
+                if (!gridNumber->displayInfos.isVisible) {
                     continue;
                 }
 
                 auto centerPos = ImVec2(gridNumber->displayInfos.centerX, gridNumber->displayInfos.centerY);
 
-                if (gridNumber->badGroup && gridNumber->badGroup->refined)
-                {
-                    float startX = gridNumber->displayInfos.centerX;
-                    float startY = gridNumber->displayInfos.centerY;
-
-                    if (gridNumber->displayInfos.refinedX == -1)
-                    {
-                        gridNumber->displayInfos.refinedX = startX;
-                        gridNumber->displayInfos.refinedY = startY;
-                    }
-
-                    auto binIdx = gridNumber->badGroup->binIdx;
-                    if (binIdx > 4)
-                    {
-                        std::cout << "Error: Bin index greater than expected. Setting to max." << std::endl;
-                        binIdx = 4;
-                    }
-
-                    float distX = bins[binIdx].pos.x - gridNumber->displayInfos.refinedX;
-                    float distY = bins[binIdx].pos.y - gridNumber->displayInfos.refinedY;
-                    float distance = sqrt(distX * distX + distY * distY);
-
-                    const float moveSpeed = 3.0f;
-                    if (distance > moveSpeed)
-                    {
-                        float dirX = distX / distance;
-                        float dirY = distY / distance;
-                        gridNumber->displayInfos.refinedX += dirX * moveSpeed;
-                        gridNumber->displayInfos.refinedY += dirY * moveSpeed;
-                        centerPos = ImVec2(gridNumber->displayInfos.refinedX, gridNumber->displayInfos.refinedY);
-
-                        refiningToBin = gridNumber->badGroup->binIdx;
-                    }
-                    else
-                    {
-                        gridNumber->badGroup.reset(); // No longer a bad number
-                        gridNumber->num = numberGrid->randomNumber(0,9);
-                        gridNumber->regenerateScale = 0.f;
-                    }
-                }
-
+                // Animate number on screen
                 float numberAlpha = 255;
-                if (gridNumber->regenerateScale < 1.f)
-                {
+                if (gridNumber->regenerateScale < 1.f) {
                     gridNumber->regenerateScale += numberGrid->randomNumber(0,10)*0.001f;
                     numberAlpha = static_cast<int>(std::clamp(gridNumber->regenerateScale*2.f*255.f, 0.f, 255.f));
                 }
 
                 // Offset from noise scale
                 double noiseScale = perlin.noise3D((x * displaySettings.noiseScale), (y * displaySettings.noiseScale), t*displaySettings.noiseSpeed);
-                if (gridNumber->displayInfos.horizontalOffset)
-                {
+                if (gridNumber->displayInfos.horizontalOffset) {
                     centerPos.x += noiseScale*displaySettings.noiseScaleOffset;
-                } else
-                {
+                } else {
                     centerPos.y += noiseScale*displaySettings.noiseScaleOffset;
                 }
 
                 // Colour
                 auto col = ColorValues::lumonBlue.Value;
                 col.w = numberAlpha;
-                if (revealMap && gridNumber->badGroup)
-                {
+                if (revealMap && gridNumber->badGroup) {
                     col = gridNumber->badGroup->isActive ? ImVec4(255,255,0,numberAlpha) : ImVec4(255,0,0,255);
                 }
 
                 // Scale from mouse hovering
                 auto numberScale = getScaleFromCursor(centerPos, mousePos);
 
-                if (gridNumber->badGroup && gridNumber->badGroup->isActive)
-                {
-                    if (numberScale > 1.0f)
-                    {
-                        gridNumber->badGroup->superActive = true;
+                // Handle if part of bad group
+                if (gridNumber->badGroup) {
+                    if (gridNumber->badGroup->isActive) {
+                        // Make number 'super active'
+                        if (numberScale > 1.0f) {
+                            gridNumber->badGroup->superActive = true;
+                        }
+                        // Mark as refined on 'LEFT CLICK'
+                        if (numberScale >= (0.5f + displaySettings.mouseScaleMultiplier) && ImGui::IsKeyDown(ImGuiKey_MouseLeft)) {
+                            gridNumber->badGroup->refined = true;
+                            bins[gridNumber->badGroup->binIdx].badGroupsRefined++;
+                        }
                     }
-                    if (numberScale >= (0.5f + displaySettings.mouseScaleMultiplier) && ImGui::IsKeyDown(ImGuiKey_MouseLeft))
-                    {
-                        gridNumber->badGroup->refined = true;
-                        bins[gridNumber->badGroup->binIdx].badGroupsRefined++;
+
+                    // Add jitter to 'super active' bad numbers
+                    if (gridNumber->badGroup->superActive) {
+                        centerPos.x += numberGrid->randomNumber(-10, 10)*badScale;
+                        centerPos.y += numberGrid->randomNumber(-10, 10)*badScale;
+                    }
+
+                    // Animate position if number has been refined
+                    if (gridNumber->badGroup->refined) {
+                        float startX = gridNumber->displayInfos.centerX;
+                        float startY = gridNumber->displayInfos.centerY;
+
+                        if (gridNumber->displayInfos.refinedX == -1) {
+                            gridNumber->displayInfos.refinedX = startX;
+                            gridNumber->displayInfos.refinedY = startY;
+                        }
+
+                        auto binIdx = gridNumber->badGroup->binIdx;
+                        if (binIdx > 4) {
+                            std::cout << "Error: Bin index greater than expected. Setting to max." << std::endl;
+                            binIdx = 4;
+                        }
+
+                        float distX = bins[binIdx].pos.x - gridNumber->displayInfos.refinedX;
+                        float distY = bins[binIdx].pos.y - gridNumber->displayInfos.refinedY;
+                        float distance = sqrt(distX * distX + distY * distY);
+
+                        if (distance > displaySettings.refinedToBinSpeed) {
+                            float dirX = distX / distance;
+                            float dirY = distY / distance;
+                            gridNumber->displayInfos.refinedX += dirX * displaySettings.refinedToBinSpeed;
+                            gridNumber->displayInfos.refinedY += dirY * displaySettings.refinedToBinSpeed;
+                            centerPos = ImVec2(gridNumber->displayInfos.refinedX, gridNumber->displayInfos.refinedY);
+
+                            refiningToBin = gridNumber->badGroup->binIdx;
+                        } else {
+                            gridNumber->badGroup.reset(); // No longer a bad number
+                            gridNumber->num = numberGrid->randomNumber(0,9);
+                            gridNumber->regenerateScale = 0.f;
+                        }
                     }
                 }
 
-                if (gridNumber->badGroup && gridNumber->badGroup->superActive)
-                {
-                    centerPos.x += numberGrid->randomNumber(-10, 10)*badScale;
-                    centerPos.y += numberGrid->randomNumber(-10, 10)*badScale;
-                }
-
+                // Draw number
                 float combinedScale = gridNumber->regenerateScale*displaySettings.imageScale*numberScale*panelScale + badScale;
                 ImGui::SetCursorPos(ImVec2(centerPos.x - ImGui::GetWindowPos().x - ((width*combinedScale)/2.f), centerPos.y - ImGui::GetWindowPos().y - ((height*combinedScale)/2.f)));
                 imageDisplay->drawImGuiImage(numberToDraw, combinedScale, col);
@@ -226,10 +213,11 @@ private:
     {
         std::string binPercentPath = "bins/bin-percent.png";
         auto [widthP, heightP] = imageDisplay->getImageSize(binPercentPath);
-        for (auto &b : bins)
-        {
+        for (auto &b : bins) {
+            // Scale based on viewport size
             auto pos = b.updatePos(windowSize, windowPos, displayPresets.numberWindowBufferBottom - displayPresets.binOffset);
 
+            // Draw bin images
             std::string binPath = "bins/bin0" + std::to_string(b.id) + ".png";
             auto [width, height] = imageDisplay->getImageSize(binPath);
             ImGui::SetCursorPos(ImVec2(pos.x - windowPos.x - (width*displayPresets.binImageScale/2.f), pos.y - windowPos.y - (height*displayPresets.binImageScale/2.f)));
@@ -239,6 +227,7 @@ private:
             ImGui::SetCursorPos(ImVec2(percentPos.x - windowPos.x - (widthP*displayPresets.binImageScale/2.f), percentPos.y - windowPos.y - (heightP*displayPresets.binImageScale/2.f)));
             imageDisplay->drawImGuiImage(binPercentPath, displayPresets.binImageScale, ColorValues::lumonBlue);
 
+            // Draw percentage bar and text
             ImVec2 trCorner = ImVec2(percentPos.x - (widthP*displayPresets.binImageScale/2.f), percentPos.y - (heightP*displayPresets.binImageScale/2.f));
             ImVec2 brCorner = ImVec2(percentPos.x + (widthP*displayPresets.binImageScale/2.f), percentPos.y + (heightP*displayPresets.binImageScale/2.f));
 
@@ -249,9 +238,8 @@ private:
 
             drawList->AddRectFilled(trCorner, ImVec2(trCorner.x + ((brCorner.x - trCorner.x)* percentD), brCorner.y), ImColor(ColorValues::lumonBlue.Value.x, ColorValues::lumonBlue.Value.y, ColorValues::lumonBlue.Value.z, 0.3f));
 
-            // Bin open
-            if (numberRefiningToBin && *numberRefiningToBin == b.id - 1)
-            {
+            // Animate bin open
+            if (numberRefiningToBin && *numberRefiningToBin == b.id - 1) {
                 std::string binOpenPath = "bins/bin-open.png";
                 auto [widthO, heightO] = imageDisplay->getImageSize(binOpenPath);
                 ImGui::SetCursorPos(ImVec2(pos.x - windowPos.x - (widthO*displayPresets.binImageScale/2.f), pos.y - windowPos.y - (heightO*displayPresets.binImageScale/2.f) - (height*displayPresets.binImageScale)));
@@ -268,6 +256,7 @@ private:
         drawList->AddRect(headerBoxMin, headerBoxMax, ColorValues::lumonBlue);
         ImVec2 headerTextPos = ImVec2(headerBoxMin.x + 25.f, (headerBoxMin.y+headerBoxMax.y)/2.f - displayPresets.fontSize/2.f);
         drawList->AddText(font, displayPresets.fontSize, headerTextPos, ColorValues::lumonBlue, "@andrewchilicki");
+
         // Lumon logo
         std::string logoPath = "lumon-logo.png";
         auto [widthH, heightH] = imageDisplay->getImageSize(logoPath);
@@ -275,8 +264,7 @@ private:
         imageDisplay->drawImGuiImage(logoPath, displayPresets.headerImageScale, ColorValues::lumonBlue);
 
         // Horizontal lines
-        auto drawLine = [&](const float y)
-        {
+        auto drawLine = [&](const float y) {
             drawList->AddLine(ImVec2(windowPos.x, y), ImVec2(windowPos.x + windowSize.x, y), ColorValues::lumonBlue, displayPresets.lineThickness);
         };
 
@@ -294,40 +282,33 @@ private:
         static bool viewportInit = false;
         bool viewportChanged = !viewportInit;
         // Handle arrow key input
-        if (ImGui::IsKeyPressed(ImGuiKey_LeftArrow))
-        {
+        if (ImGui::IsKeyPressed(ImGuiKey_LeftArrow)) {
             panelOffset.x += controlSettings.arrowSensitivity;
             viewportChanged = true;
-        } else if (ImGui::IsKeyPressed(ImGuiKey_RightArrow))
-        {
+        } else if (ImGui::IsKeyPressed(ImGuiKey_RightArrow)) {
             panelOffset.x -= controlSettings.arrowSensitivity;
             viewportChanged = true;
         }
 
-        if (ImGui::IsKeyPressed(ImGuiKey_UpArrow))
-        {
+        if (ImGui::IsKeyPressed(ImGuiKey_UpArrow)) {
             panelOffset.y += controlSettings.arrowSensitivity;
             viewportChanged = true;
-        } else if (ImGui::IsKeyPressed(ImGuiKey_DownArrow))
-        {
+        } else if (ImGui::IsKeyPressed(ImGuiKey_DownArrow)) {
             panelOffset.y -= controlSettings.arrowSensitivity;
             viewportChanged = true;
         }
 
         // Handle zoom
-        if (ImGui::IsKeyPressed(ImGuiKey_Comma))
-        {
+        if (ImGui::IsKeyPressed(ImGuiKey_Comma)) {
             panelScale -= controlSettings.zoomSensitivity;
             viewportChanged = true;
-        } else if (ImGui::IsKeyPressed(ImGuiKey_Period))
-        {
+        } else if (ImGui::IsKeyPressed(ImGuiKey_Period)) {
             panelScale += controlSettings.zoomSensitivity;
             viewportChanged = true;
         }
-        // panelScale = std::clamp(panelScale, 0.8f, 1.8f);
+        panelScale = std::clamp(panelScale, displaySettings.minZoomScale, displaySettings.maxZoomScale);
 
-        if (viewportChanged)
-        {
+        if (viewportChanged) {
             // Clamp movement to within grid boundaries
             float gridWidthScaled  = gridSize * displaySettings.gridSpacing * panelScale;
             float gridHeightScaled = gridSize * displaySettings.gridSpacing * panelScale;
@@ -337,8 +318,7 @@ private:
             float minOffsetY = -gridHeightScaled + windowSize.y - displayPresets.numberWindowBufferTop;
             float maxOffsetY = displayPresets.numberWindowBufferTop;
 
-            if (!viewportInit)
-            {
+            if (!viewportInit) {
                 // Start at center of grid
                 panelOffset.x = (windowSize.x - gridWidthScaled) / 2.0f / panelScale;
                 panelOffset.y = (windowSize.y - gridHeightScaled) / 2.0f / panelScale;
@@ -355,8 +335,7 @@ private:
     void drawSettings() final
     {
         ImGui::SetWindowFontScale(displayPresets.settingsFontScale);
-        if (ImGui::Button("Save Settings"))
-        {
+        if (ImGui::Button("Save Settings")) {
             saveSettings(Settings{displaySettings, controlSettings}, settingsSavePath);
         }
         ImGui::Separator();
@@ -366,6 +345,9 @@ private:
         ImGui::InputFloat("Numbers Grid Spacing", &displaySettings.gridSpacing);
         ImGui::InputFloat("Mouse Scale Radius", &displaySettings.mouseScaleRadius);
         ImGui::InputFloat("Mouse Scale Multiplier", &displaySettings.mouseScaleMultiplier);
+        ImGui::InputFloat("Min Scale Multiplier", &displaySettings.minZoomScale);
+        ImGui::InputFloat("Max Scale Multiplier", &displaySettings.maxZoomScale);
+        ImGui::InputFloat("Refined to Bin Speed", &displaySettings.refinedToBinSpeed);
         ImGui::Text("Noise:");
         ImGui::InputFloat("Noise Speed", &displaySettings.noiseSpeed);
         ImGui::InputFloat("Noise Scale", &displaySettings.noiseScale);
@@ -380,11 +362,12 @@ private:
 
     bool updateDisplaySettings(PresetDisplaySettings &settings, float globalScale)
     {
+        // Want preset display settings to scale proportionally to the window size
         auto viewportSize = ImGui::GetMainViewport()->Size;
-        if (lastViewportSize.x == viewportSize.x && lastViewportSize.y == viewportSize.y && lastGlobalScale == globalScale)
-        {
+        if (lastViewportSize.x == viewportSize.x && lastViewportSize.y == viewportSize.y && lastGlobalScale == globalScale) {
             return false;
         }
+
         float displaySizeScalePrev = lastViewportSize.x/1280.f * lastGlobalScale;
         float displaySizeScale = viewportSize.x/1280.f * globalScale;
         float newScale = displaySizeScale / displaySizeScalePrev;
@@ -415,8 +398,7 @@ private:
         float distY = mousePos.y - globalNumberPos.y;
         float distance = sqrt(distX * distX + distY * distY);
 
-        if (distance < displaySettings.mouseScaleRadius)
-        {
+        if (distance < displaySettings.mouseScaleRadius) {
             return 1.0f + (displaySettings.mouseScaleRadius - distance) / displaySettings.mouseScaleRadius * displaySettings.mouseScaleMultiplier;
         }
         return 1.0f;
@@ -443,6 +425,7 @@ private:
     // Debug options
     bool revealMap = false;
 
+    // TODO - Move to class
     struct Bin
     {
         int id;
@@ -451,8 +434,7 @@ private:
         int badGroupsRefined = 0;
         int maxBadGroups = 0;
 
-        ImVec2 updatePos(const ImVec2 &windowSize, const ImVec2 &windowPos, float offsetY)
-        {
+        ImVec2 updatePos(const ImVec2 &windowSize, const ImVec2 &windowPos, float offsetY) {
             pos = ImVec2(windowPos.x + (windowSize.x / 6)*id, windowPos.y + windowSize.y - offsetY);
             return pos;
         }

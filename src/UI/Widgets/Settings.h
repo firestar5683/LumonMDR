@@ -7,6 +7,7 @@
 
 struct PresetDisplaySettings
 {
+    // Preset sizing and offsets for UI
     float numberWindowBufferTop = 125.f;
     float numberWindowBufferBottom = 115.f;
 
@@ -57,8 +58,7 @@ inline void saveSettingsJson(const nlohmann::json& settingsJson, const std::stri
         file.flush();
         file.close();
         std::cout << "Settings saved to disk." << std::endl;
-    }
-    catch (const std::exception& e) {
+    } catch (const std::exception& e) {
         std::cerr << "Error saving settings: " << e.what() << std::endl;
     }
 }
@@ -72,10 +72,14 @@ struct DisplaySettings
 
     float mouseScaleRadius = 100.f;
     float mouseScaleMultiplier = 2.f;
+    float maxZoomScale = 0.8f;
+    float minZoomScale = 0.2f;
 
     float noiseSpeed = 0.004f;
     float noiseScale = 1.f;
     float noiseScaleOffset = 15;
+
+    float refinedToBinSpeed = 3.0f;
 
     NLOHMANN_DEFINE_TYPE_INTRUSIVE(DisplaySettings,
             globalScale,
@@ -83,9 +87,12 @@ struct DisplaySettings
             gridSpacing,
             mouseScaleRadius,
             mouseScaleMultiplier,
+            maxZoomScale,
+            minZoomScale,
             noiseSpeed,
             noiseScale,
-            noiseScaleOffset
+            noiseScaleOffset,
+            refinedToBinSpeed
         );
 };
 
@@ -107,26 +114,21 @@ struct Settings
 
 inline std::optional<Settings> loadSettings(const std::string& jsonPath)
 {
-    try
-    {
-        if (auto json = loadSettingsFromJson(jsonPath))
-        {
+    try {
+        if (auto json = loadSettingsFromJson(jsonPath)) {
             return json->get<Settings>();
         }
-    } catch (const std::exception& e)
-    {
+    } catch (const std::exception& e) {
         std::cerr << "Error loading settings: " << e.what() << std::endl;
     }
     return std::nullopt;
 }
 inline void saveSettings(const Settings& settings, const std::string& jsonPath)
 {
-    try
-    {
+    try {
         nlohmann::json json = settings;
         saveSettingsJson(json, jsonPath);
-    } catch (const std::exception& e)
-    {
+    } catch (const std::exception& e) {
         std::cerr << "Error saving settings: " << e.what() << std::endl;
     }
 }

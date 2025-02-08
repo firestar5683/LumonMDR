@@ -3,7 +3,6 @@
 #include "ImageDisplay.h"
 #include <imgui.h>
 #include <iostream>
-#include <ostream>
 
 #include "../UIManager.h"
 
@@ -18,10 +17,9 @@ public:
 
     void update() final
     {
-        // Adjust logo scale and speed based on viewport size so it is consistent
+        // Want scale proportionally to the window size
         auto viewportSize = ImGui::GetMainViewport()->Size;
-        if (lastViewportSize.x != viewportSize.x || lastViewportSize.y != viewportSize.y)
-        {
+        if (lastViewportSize.x != viewportSize.x || lastViewportSize.y != viewportSize.y) {
             float displaySizeScalePrev = lastViewportSize.x/1280.f;
             float displaySizeScale = viewportSize.x/1280.f;
             float adjustedScale = displaySizeScale / displaySizeScalePrev;
@@ -46,19 +44,15 @@ public:
         ImVec2 minPosition = ImVec2(windowPos.x, windowPos.y);
         ImVec2 maxPosition = ImVec2(windowPos.x + windowSize.x - scale*logoSize.x, windowPos.y + windowSize.y - scale*logoSize.y);
 
-        if (currentLogoPosition.x >= maxPosition.x)
-        {
+        if (currentLogoPosition.x >= maxPosition.x) {
             nextOffset.x = -1;
-        } else if (currentLogoPosition.x < minPosition.x)
-        {
+        } else if (currentLogoPosition.x < minPosition.x) {
             nextOffset.x = 1;
         }
 
-        if (currentLogoPosition.y >= maxPosition.y)
-        {
+        if (currentLogoPosition.y >= maxPosition.y) {
             nextOffset.y = -1;
-        } else if (currentLogoPosition.y < minPosition.y)
-        {
+        } else if (currentLogoPosition.y < minPosition.y) {
             nextOffset.y = 1;
         }
 
