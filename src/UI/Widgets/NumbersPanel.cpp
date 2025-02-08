@@ -183,14 +183,11 @@ private:
                 }
 
                 // Colour
-                auto col = gridNumber->badGroup ? ImVec4(255,0,0,255) : ImVec4(255,255,255,numberAlpha);
-                if (gridNumber->badGroup && gridNumber->badGroup->isActive)
+                auto col = ColorValues::lumonBlue.Value;
+                col.w = numberAlpha;
+                if (revealMap && gridNumber->badGroup)
                 {
-                    col = ImVec4(255,255,0,numberAlpha);
-                }
-                if (!revealMap)
-                {
-                    col = ImVec4(255,255,255,numberAlpha);
+                    col = gridNumber->badGroup->isActive ? ImVec4(255,255,0,numberAlpha) : ImVec4(255,0,0,255);
                 }
 
                 // Scale from mouse hovering
