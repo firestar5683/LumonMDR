@@ -81,6 +81,8 @@ struct DisplaySettings
 
     float refinedToBinSpeed = 3.0f;
 
+    std::string headerText = "@andrewchilicki";
+
     NLOHMANN_DEFINE_TYPE_INTRUSIVE(DisplaySettings,
             globalScale,
             imageScale,
@@ -92,7 +94,8 @@ struct DisplaySettings
             noiseSpeed,
             noiseScale,
             noiseScaleOffset,
-            refinedToBinSpeed
+            refinedToBinSpeed,
+            headerText
         );
 };
 

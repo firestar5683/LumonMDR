@@ -255,7 +255,7 @@ private:
         ImVec2 headerBoxMax = ImVec2(windowPos.x + windowSize.x - displayPresets.headerBoxBufferX - displayPresets.headerImageOffsetX, windowPos.y + displayPresets.numberWindowBufferTop - displayPresets.lineGraphicsSpacing - displayPresets.headerBoxBufferY);
         drawList->AddRect(headerBoxMin, headerBoxMax, ColorValues::lumonBlue);
         ImVec2 headerTextPos = ImVec2(headerBoxMin.x + 25.f, (headerBoxMin.y+headerBoxMax.y)/2.f - displayPresets.fontSize/2.f);
-        drawList->AddText(font, displayPresets.fontSize, headerTextPos, ColorValues::lumonBlue, "@andrewchilicki");
+        drawList->AddText(font, displayPresets.fontSize, headerTextPos, ColorValues::lumonBlue, displaySettings.headerText.c_str());
 
         // Lumon logo
         std::string logoPath = "lumon-logo.png";
@@ -348,6 +348,7 @@ private:
         ImGui::InputFloat("Min Scale Multiplier", &displaySettings.minZoomScale);
         ImGui::InputFloat("Max Scale Multiplier", &displaySettings.maxZoomScale);
         ImGui::InputFloat("Refined to Bin Speed", &displaySettings.refinedToBinSpeed);
+        ImGui::InputText("Header Text", &displaySettings.headerText[0], displaySettings.headerText.capacity() + 1);
         ImGui::Text("Noise:");
         ImGui::InputFloat("Noise Speed", &displaySettings.noiseSpeed);
         ImGui::InputFloat("Noise Scale", &displaySettings.noiseScale);
