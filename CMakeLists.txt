@@ -31,6 +31,7 @@ if(CMAKE_CROSSCOMPILING)
 endif()
 
 # OpenGL
+set(OpenGL_GL_PREFERENCE GLVND)
 find_package(OpenGL REQUIRED)
 
 # GLFW
