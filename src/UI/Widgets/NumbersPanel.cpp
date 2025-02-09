@@ -103,7 +103,7 @@ private:
                     gridNumber->displayInfos.centerX = localNumberPos.x + windowPos.x;
                     gridNumber->displayInfos.centerY = localNumberPos.y + windowPos.y;
 
-                    double baseNumberScale = gridNumber->regenerateScale*displaySettings.imageScale*panelScale;
+                    double baseNumberScale = displaySettings.imageScale*panelScale;
                     double widthOffset = (baseNumberScale*width/2.f);
                     double heightOffset = (baseNumberScale*height/2.f);
                     gridNumber->displayInfos.isVisible = gridNumber->displayInfos.centerX + widthOffset < windowPos.x + windowSize.x && gridNumber->displayInfos.centerX - widthOffset > windowPos.x &&
@@ -436,7 +436,7 @@ private:
         int maxBadGroups = 0;
 
         ImVec2 updatePos(const ImVec2 &windowSize, const ImVec2 &windowPos, float offsetY) {
-            pos = ImVec2(windowPos.x + (windowSize.x / 6)*id, windowPos.y + windowSize.y - offsetY);
+            pos = ImVec2(windowPos.x + (windowSize.x / 6.f)*id, windowPos.y + windowSize.y - offsetY);
             return pos;
         }
     };
