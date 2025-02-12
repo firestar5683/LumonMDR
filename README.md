@@ -11,6 +11,10 @@ Feel free to email comments, suggestions, or inquiries directly to andrewchilx@g
   <img src="https://github.com/user-attachments/assets/dc987a56-2a41-4780-ac42-345e78c8344e" width="49%">
   <img src="https://github.com/user-attachments/assets/f46a447d-42ce-47af-b2ae-17409240cb9f" width="49%">
 </p>
+<p align="center">
+  <img src="https://github.com/user-attachments/assets/15eabc19-85e8-4757-908c-e7565946b3b8" width="49%">
+  <img src="https://github.com/user-attachments/assets/54204491-7dae-41e7-aed4-271cc2c316bf" width="49%">
+</p>
 
 ---
 ---
@@ -75,12 +79,22 @@ Feel free to email comments, suggestions, or inquiries directly to andrewchilx@g
 
 ## Final Design
 
+<p align="center">
+  <img src="https://github.com/user-attachments/assets/874d9d46-c7f7-44cd-a9ec-21d55afb4973" width="30%">&nbsp;
+  <img src="https://github.com/user-attachments/assets/67b06a72-48b5-4889-83c1-97fb0fe5fab0" width="30%">&nbsp;
+  <img src="https://github.com/user-attachments/assets/2189913c-6f3b-453f-a94a-37ee4acf72d1" width="30%">
+</p>
+<p align="center">
+  <img src="https://github.com/user-attachments/assets/2b0c8d53-02ca-4402-87ce-a6af0ef87a9b" width="60%">&nbsp;
+  <img src="https://github.com/user-attachments/assets/3c73aa3b-753d-4f1e-9f5e-b81ce0db6a6c" width="30%">
+</p>
+
 - The computer’s outer shell was modeled in Blender from the ground up, closely following reference images from the show to capture the original look.
 - The design was then optimized for 3D printing.
   - The structure was made modular, allowing for easy assembly and disassembly.
   - Each part includes a flat printing surface, enabling clean prints without the need for supports.
-  - Precise tolerances were incorporated to ensure a snug fit for all components.
+  - Tolerances were incorporated to ensure a snug fit for all components.
 - Finally, the interior was equipped with an adjustable Raspberry Pi mount.
-  - The mounting bracket can move both laterally and forward, allowing for fine-tuned alignment of the LCD screen with the front panel.
+  - The mounting bracket can move laterally, and the RPi forward, allowing for fine-tuned alignment of the LCD screen with the front panel.
 
 ## Final Product
