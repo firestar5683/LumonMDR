@@ -1,0 +1,20 @@
+{
+    "controlSettings": {
+        "arrowSensitivity": 80.0,
+        "zoomSensitivity": 0.029999999552965164
+    },
+    "displaySettings": {
+        "globalScale": 1.3989999523162842,
+        "gridSpacing": 160.0,
+        "headerText": "Timeri T",
+        "imageScale": 0.8,
+        "maxZoomScale": 0.29,
+        "minZoomScale": 0.20000000149011612,
+        "mouseScaleMultiplier": 1.73,
+        "mouseScaleRadius": 38.0,
+        "noiseScale": 10.0,
+        "noiseScaleOffset": 2.0,
+        "noiseSpeed": 0.0836000000949949026,
+        "refinedToBinSpeed": 9.0
+    }
+}
