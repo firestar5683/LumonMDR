@@ -97,6 +97,11 @@ Feel free to email comments, suggestions, or inquiries directly to andrewchilx@g
 - Finally, the interior was equipped with an adjustable Raspberry Pi mount.
   - The mounting bracket can move laterally, and the RPi forward, allowing for fine-tuned alignment of the LCD screen with the front panel.
 
+## Final Product
+<p align="center">
+  <img src="https://github.com/user-attachments/assets/b8fa5a15-ae32-4bd2-a9c3-7a4a64b0ad40" width="90%">
+</p>
+
 ## Build Photos
 
 <p align="center">
