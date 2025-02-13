@@ -1,7 +1,5 @@
 # Introduction
 
-The goal of this project was to create a working miniature desktop display inspired by the 'Macrodata Refinement' computers featured in Apple TV's *Severance*. This build consists of two key aspects: the **software** and the **hardware design**, both outlined below.
-
 Feel free to email comments, suggestions, or inquiries directly to andrewchilx@gmail.com.
 
 <p align="center">
