@@ -32,7 +32,7 @@ public:
 
         // Initialize ImGui backends
         ImGui_ImplGlfw_InitForOpenGL(glfwGetCurrentContext(), true);
-        ImGui_ImplOpenGL3_Init("#version 120");
+        ImGui_ImplOpenGL3_Init("#version 130");
 
         numbersPanel->init();
     }
