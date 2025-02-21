@@ -120,7 +120,7 @@ private:
                 // Animate number on screen
                 float numberAlpha = 255;
                 if (gridNumber->regenerateScale < 1.f) {
-                    gridNumber->regenerateScale += numberGrid->randomNumber(0,10)*0.006f;
+                    gridNumber->regenerateScale += numberGrid->randomNumber(0,10)*0.001f;
                     numberAlpha = static_cast<int>(std::clamp(gridNumber->regenerateScale*2.f*255.f, 0.f, 255.f));
                 }
 
