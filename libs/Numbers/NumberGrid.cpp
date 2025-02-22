@@ -51,7 +51,7 @@ public:
         if (activeBadGroup && !activeGroupStillVisible) {
             activeBadGroup.reset();
             newActiveBadGroup = true;
-            newBadGroupCountdown = randomNumber(2, 5) * 50;
+            newBadGroupCountdown = randomNumber(1, 3) * 50;
         }
 
         // Select a new active group if necessary
