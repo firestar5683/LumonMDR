@@ -135,8 +135,8 @@ private:
     int newBadGroupCountdown = 500;
 
     siv::PerlinNoise perlinBadNumbers{ 505 };
-    float badScale = 0.4f;
-    float badThresh = 0.5f;
+    float badScale = 0.25f;
+    float badThresh = 0.7f;
     bool newBad = false;
 
     void generateGrid(int size)
