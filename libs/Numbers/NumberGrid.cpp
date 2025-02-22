@@ -136,7 +136,7 @@ private:
 
     siv::PerlinNoise perlinBadNumbers{ 505 };
     float badScale = 0.4f;
-    float badThresh = 0.7f;
+    float badThresh = 0.5f;
     bool newBad = false;
 
     void generateGrid(int size)
